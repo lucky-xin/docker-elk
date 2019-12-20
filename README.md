@@ -5,18 +5,12 @@
 目录下到所有日志，然后把日志发送到kafka，使用kafka可以多次消费日志。日志推送到es之外还有Error日志必须告警给开发人员。logstash监听Kafka并把日志推送到es
 之中
 ```
-### 进入elasticsearch-kibana-7.1.1执行如下命令启动elasticsearch，kibana
+### 进入当前项目elasticsearch-kibana-7.1.1执行如下命令启动elasticsearch，kibana
 ```shell script
 docker-compose -f docker-compose-single-node.yml up -d
 ```
-## 新建
 
-### 进入elasticsearch-logstash-7.1.1执行如下命令启动logstash，filebeat
-```shell script
-docker-compose -f docker-compose-prod.yml up -d
-```
-
-### 浏览器输入127.0.0.1：5601 在console 页面之中新建SpringCloud 日志索引生命周期，每1000条日志记录rollover，时长1天为warm，7天就删除
+### 浏览器输入127.0.0.1:5601 在console 页面之中新建SpringCloud 日志索引生命周期，每1000条日志记录rollover，时长1天为warm，7天就删除
 ```json
 PUT _ilm/policy/microservice_log_ilm_policy
 {
@@ -388,7 +382,7 @@ output {
 }
 ```
 
-### 进入logstash-7.1.1执行如下命令启动logstash，filebeat待启动完毕之后就会在kibana之中看到日志索引出现
+### 进入当前项目logstash-filebeat-7.1.1执行如下命令启动logstash，filebeat待启动完毕之后就会在kibana之中看到日志索引出现
 ```shell script
 docker-compose -f docker-compose-prod.yml up -d
 ```
