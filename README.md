@@ -61,7 +61,7 @@ PUT _template/spring_cloud_log_template
   "settings": {
     "number_of_shards": 1,
     "number_of_replicas": 1,
-    "index.lifecycle.name": "microservice_log_ilm_policy"，
+    "index.lifecycle.name": "microservice_log_ilm_policy",
     "index.lifecycle.rollover_alias": "microservice_log"
   },
   "mappings": {
