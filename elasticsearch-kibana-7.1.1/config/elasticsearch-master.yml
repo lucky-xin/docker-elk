@@ -1,0 +1,35 @@
+#xpack.license.self_generated.type: trial
+#xpack.security.enabled: false
+#xpack.monitoring.collection.enabled: false
+
+node.name: es-master
+bootstrap.memory_lock: true
+discovery.type: single-node
+
+# es分布式多节点的主节点配置文件
+# 集群名，master和slave要相同
+#cluster.name: docker-cluster
+# 主节点
+node.master: true
+# 不作为数据节点
+node.data: true
+# 服务监听的范围，所有
+network.host: 0.0.0.0
+
+# 设置主节点的数量和主机
+#discovery.zen.minimum_master_nodes: 1
+#discovery.zen.ping.unicast.hosts: ["es_master:9300"]
+
+#gateway.recover_after_nodes: 2
+#gateway.recover_after_time: 5m
+#gateway.expected_nodes: 1
+
+# 搜索机制
+#script.engine.groovy.inline.search: on
+#script.engine.groovy.inline.aggs: on
+indices.recovery.max_bytes_per_sec: 20mb
+
+# 安全机制
+## 允许跨域请求
+http.cors.enabled: true
+http.cors.allow-origin: "*"

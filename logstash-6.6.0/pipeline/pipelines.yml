@@ -1,0 +1,3 @@
+- pipeline.id: spring-app-log-pipeline
+  path.config: "/usr/share/logstash/pipeline/logstash-patent-data-server-log.conf"
+  pipeline.workers: 8

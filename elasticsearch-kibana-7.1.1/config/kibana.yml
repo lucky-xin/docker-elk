@@ -1,0 +1,10 @@
+elasticsearch.hosts: http://es-master:9200
+server.name: kibana
+server.host: "0"
+xpack.monitoring.ui.container.elasticsearch.enabled: true
+## X-Pack security credentials
+#elasticsearch.username: elastic
+#elasticsearch.password: Data*2020*
+
+
+

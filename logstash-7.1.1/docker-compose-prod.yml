@@ -1,0 +1,42 @@
+# 注意：fileBeat.yml文件的所有者必须为root, 且权限为544 -rw-r--r--
+
+version: '3.7'
+services:
+  datainsights-logstash:
+    container_name: datainsights-logstash
+    image: xin8docker/logstash
+    restart: on-failure
+    hostname: datainsights-logstash
+    volumes:
+      - ./pipeline:/usr/share/logstash/pipeline
+      - ./config:/usr/share/logstash/config
+    environment:
+      - XPACK_MONITORING_ELASTICSEARCH_URL=http://es-master:9200
+    command: bin/logstash -f /usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 9600:9600
+      - 5044:5044
+      - 4560:4560
+    networks:
+      - datainsights-framework-net
+
+  datainsights-filebeat:
+    container_name: datainsights-filebeat
+    image: xin8docker/filebeat
+    restart: on-failure
+    hostname: datainsights-filebeat
+    user: root
+    volumes:
+      - /private/var/datainsights-logs:/var/datainsights-logs
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - datainsights-logstash
+    networks:
+      - datainsights-framework-net
+
+networks:
+  datainsights-framework-net:
+    external:
+      name: datainsights-framework-net

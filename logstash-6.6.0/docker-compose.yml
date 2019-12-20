@@ -1,0 +1,45 @@
+# 注意：fileBeat.yml文件的所有者必须为root, 且权限为544 -rw-r--r--
+
+version: '3.7'
+services:
+  datainsights-logstash:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: datainsights-logstash
+    hostname: datainsights-logstash
+    volumes:
+      - ./pipeline:/usr/share/logstash/pipeline
+      - ./config:/usr/share/logstash/config
+    environment:
+      - xpack.monitoring.elasticsearch.hosts=http://es-master:9200
+    command: bin/logstash -f /usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 9600:9600
+      - 5044:5044
+      - 4560:4560
+    networks:
+      - datainsights-framework-net
+
+  datainsights-filebeat:
+    build:
+      context: ./
+      dockerfile: ./filebeat/Dockerfile
+    container_name: datainsights-filebeat
+    hostname: datainsights-filebeat
+    user: root
+    volumes:
+      - /home/czm/datainsights-app/datainsights-mysql/data/slow_query.log:/datainsights-mysql/data/slow_query.log
+      - /var/datainsights-logs:/var/datainsights-logs
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - datainsights-logstash
+    networks:
+      - datainsights-framework-net
+
+networks:
+  datainsights-framework-net:
+    external:
+      name: datainsights-framework-net

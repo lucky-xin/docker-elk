@@ -1,0 +1,21 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /datainsights-mysql/data/slow_query.log
+    multiline:
+      pattern: "^# User@Host: "
+      negate: true
+      match: after
+
+  - type: log
+    enabled: true
+    paths:
+      - /var/datainsights-logs/*/info.log
+    multiline:
+      pattern: "^[a-z-]+ |"
+      negate: true
+      match: after
+
+output.logstash:
+  hosts: ["datainsights-logstash:5044"]

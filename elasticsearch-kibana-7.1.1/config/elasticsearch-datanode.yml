@@ -1,0 +1,25 @@
+# es分布式多节点的从节点配置文件
+
+# 集群名，master和slave要相同
+cluster.name: docker-cluster
+# 节点名
+# node.name: es-datanode
+# 主节点
+node.master: false
+# 不作为数据节点
+node.data: true
+# 服务监听的范围，所有
+network.host: 0.0.0.0
+
+# 设置主节点的数量和主机
+discovery.zen.minimum_master_nodes: 1
+# discovery.zen.ping.unicast.hosts: ["es_master:9300"]
+
+gateway.recover_after_nodes: 2
+gateway.recover_after_time: 5m
+gateway.expected_nodes: 1
+
+# 搜索机制
+#script.engine.groovy.inline.search: on
+#script.engine.groovy.inline.aggs: on
+indices.recovery.max_bytes_per_sec: 20mb

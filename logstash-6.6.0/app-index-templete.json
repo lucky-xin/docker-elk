@@ -1,0 +1,71 @@
+#https://www.elastic.co/guide/en/elasticsearch/reference/6.6/indices-templates.html
+PUT _template/spring_cloud_log_template
+{
+  "index_patterns": [
+    "spring-cloud-*"
+  ],
+  "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1,
+      "index.lifecycle.name": "microservice_log_ilm_policy"
+  },
+  "mappings": {
+    "_doc": {
+      "_source": {
+        "enabled": true
+      },
+      "properties": {
+        "server_name": {
+          "type": "keyword"
+        },
+        "log_level": {
+          "type": "keyword"
+        },
+        "ip": {
+          "type": "keyword"
+        },
+        "remote_host": {
+          "type": "keyword"
+        },
+        "request_url": {
+          "type": "keyword"
+        },
+        "thread": {
+          "type": "keyword"
+        },
+        "class": {
+          "type": "keyword"
+        },
+        "log_info": {
+          "type": "keyword"
+        },
+        "exception_info": {
+          "type": "text"
+        },
+        "agent": {
+          "properties": {
+            "ephemeral_id": {
+              "type": "keyword"
+            },
+            "hostname": {
+              "type": "keyword"
+            },
+            "id": {
+              "type": "keyword"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "version": {
+              "type": "keyword"
+            }
+          }
+        },
+        "@timestamp": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss.SSSZ||yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss.SSSZ"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+# es分布式多节点的docker-composer.yml文件
+# 用于一把梭部署4docker(1主节点，3数据节点)
+
+version: '2'
+services:
+  es-master:
+    image: xin8docker/elasticsearch:7.1.1
+    restart: always
+    build: .
+    container_name: es-master
+    environment:
+      - node.name=es-master
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "ES_HEAP_SIZE=2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - es-master:/usr/share/elasticsearch/data
+      - ./config/elasticsearch-master.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - esnet
+  
+  es-datanode1:
+    image:  xin8docker/elasticsearch:7.1.1
+    restart: always
+    container_name: es-datanode1
+    environment:
+      - cluster.name=docker-cluster
+      - node.name=es-datanode1
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "ES_HEAP_SIZE=2g"
+      - "discovery.zen.ping.unicast.hosts=es-master"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-datanode1:/usr/share/elasticsearch/data
+      - ./config/elasticsearch-datanode.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - esnet
+
+  es-datanode2:
+    image:  xin8docker/elasticsearch:7.1.1
+    restart: always
+    container_name: es-datanode2
+    environment:
+      - cluster.name=docker-cluster
+      - node.name=es-datanode2
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "ES_HEAP_SIZE=2g"
+      - "discovery.zen.ping.unicast.hosts=es-master"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-datanode2:/usr/share/elasticsearch/data
+      - ./config/elasticsearch-datanode.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - esnet
+      
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.1.1
+    restart: always
+    container_name: kibana
+    environment:
+      - SERVER_NAME=kibana
+      - ELASTICSEARCH_URL=http://es-master:9200
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+
+networks:
+  esnet:
+    external: true
+
+volumes: 
+  es-master:
+    external: true
+  es-datanode1:
+    external: true  
+  es-datanode2:
+    external: true

@@ -1,0 +1,154 @@
+version: '3.3'
+services:
+  es-master:
+    image: datainsights/elasticsearch_ik:latest
+    hostname: es-master
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == bc-dev-env
+      restart_policy:
+        condition: on-failure
+    environment:
+      node.name: "es-master"
+      cluster.name: "bc-es"
+      node.master: "true" #主节点
+      node.data: "false"
+      discovery.zen.minimum_master_nodes: 1
+      gateway.recover_after_nodes: 2
+      gateway.recover_after_time: "5m"
+      gateway.expected_nodes: 1
+      # script.engine.groovy.inline.search: on
+      # script.engine.groovy.inline.aggs: on
+      indices.recovery.max_bytes_per_sec: "20mb"
+      discovery.zen.ping.unicast.hosts: "es-master"
+      http.cors.enabled: "true"
+      http.cors.allow-origin: "*"
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - es-master:/usr/share/elasticsearch/data
+    networks:
+      bc-elk:
+        aliases:
+          - es-master
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+  
+  es_datanode1:
+    image: datainsights/elasticsearch_ik:latest
+    hostname: es_datanode1
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == bc-dev-env
+      restart_policy:
+        condition: on-failure
+    environment:
+      node.name: "es_datanode1"
+      cluster.name: "bc-es"
+      node.master: "false" #主节点
+      node.data: "true"
+      discovery.zen.minimum_master_nodes: 1
+      gateway.recover_after_nodes: 2
+      gateway.recover_after_time: 5m
+      gateway.expected_nodes: 1
+      # script.engine.groovy.inline.search: on
+      # script.engine.groovy.inline.aggs: on
+      indices.recovery.max_bytes_per_sec: "20mb"
+      discovery.zen.ping.unicast.hosts: "es-master"
+      http.cors.enabled: "true"
+      http.cors.allow-origin: "*"
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+    volumes:
+      - es_datanode1:/usr/share/elasticsearch/data
+    networks:
+      bc-elk:
+        aliases:
+          - es-datanode1
+
+  es_datanode2:
+    image: datainsights/elasticsearch_ik:latest
+    hostname: es_datanode2
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == bc-dev-env
+      restart_policy:
+        condition: on-failure
+    environment:
+      node.name: "es_datanode2"
+      cluster.name: "bc-es"
+      node.master: "false" #主节点
+      node.data: "true"
+      discovery.zen.minimum_master_nodes: 1
+      gateway.recover_after_nodes: 2
+      gateway.recover_after_time: 5m
+      gateway.expected_nodes: 1
+      # script.engine.groovy.inline.search: on
+      # script.engine.groovy.inline.aggs: on
+      indices.recovery.max_bytes_per_sec: "20mb"
+      discovery.zen.ping.unicast.hosts: "es-master"
+      http.cors.enabled: "true"
+      http.cors.allow-origin: "*"
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+    # ports:
+    #   - 9202:9200
+    #   - 9302:9300
+    volumes:
+      - es_datanode2:/usr/share/elasticsearch/data
+    networks:
+      bc-elk:
+        aliases:
+          - es-datanode2
+
+  kibana:
+    image: kibana:6.4.0
+    hostname: kibana
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == bc-dev-env
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: http://es-master:9200
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+    networks:
+      bc-elk:
+        aliases:
+          - kibana
+    ports:
+      - 5601:5601
+  
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    restart: always
+    container_name: elasticsearch-head
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == bc-dev-env
+    ports:
+      - 9100:9100
+    networks:
+      bc-elk:
+        aliases:
+          - elasticsearch-head
+
+volumes:
+  es_datanode2:
+  es_datanode1:
+  es-master:
+networks:
+  bc-elk:
+    external:
+      name: bc-elk

@@ -1,0 +1,13 @@
+# author: luchoaxin
+# 配置参考: https://segmentfault.com/a/1190000016591476
+pipeline:
+  id: main
+  workers: 8
+  batch:
+    size: 125
+    delay: 50
+
+config:
+  reload:
+    automatic: true
+    interval: 5s

@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  es-master:
+    image: xin8docker/elasticsearch:7.1.1
+    restart: on-failure
+    container_name: es-master
+    environment:
+      - "ES_JAVA_OPTS=-Xms256M -Xmx256M"
+      #      - "ELASTIC_PASSWORD=Data*2020*"
+      - "ES_HEAP_SIZE=1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - ./data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch-master.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - datainsights-framework-net
+
+  kibana:
+    image: xin8docker/kibana:7.1.1
+    restart: on-failure
+    container_name: kibana
+    environment:
+      - XPACK_GRAPH_ENABLED=true
+      - TIMELION_ENABLED=true
+      - XPACK_MONITORING_COLLECTION_ENABLED=true
+    volumes:
+      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    depends_on:
+      - es-master
+    ports:
+      - 5601:5601
+    networks:
+      - datainsights-framework-net
+
+networks:
+  datainsights-framework-net:
+    external: true
