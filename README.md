@@ -530,3 +530,6 @@ GET spring-cloud-datainsights-auth-2019.12.20/_mapping
   }
 }
 ```
+![生成的索引列表](https://github.com/lucky-xin/docker-elk/blob/master/.img/index-list.png)
+![生成的数据预览](https://github.com/lucky-xin/docker-elk/blob/master/.img/index-json-detail.png)
+![生成的json数据详情](https://github.com/lucky-xin/docker-elk/blob/master/.img/data-preview.png)
