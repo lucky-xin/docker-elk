@@ -10,7 +10,7 @@
 docker-compose -f docker-compose-single-node.yml up -d
 ```
 
-### 浏览器输入127.0.0.1:5601 在console 页面之中新建SpringCloud 日志索引生命周期，每1000条日志记录rollover，时长1天为warm，7天就删除
+### 浏览器输入127.0.0.1:5601 在console 页面之中新建SpringCloud 日志索引生命周期，每1000条日志记录rollover一次，时长1天为warm，7天就删除
 ```json
 PUT _ilm/policy/microservice_log_ilm_policy
 {
